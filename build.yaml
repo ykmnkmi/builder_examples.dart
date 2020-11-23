@@ -1,7 +1,7 @@
 builders:
-  fatu:
-    import: 'package:fatu/builder.dart'
-    builder_factories: ['fatuBuilder']
+  abet:
+    import: 'package:abet/builder.dart'
+    builder_factories: ['abetBuilder']
     build_extensions: {"$lib$": [".dart"]}
     auto_apply: dependents
     build_to: source
