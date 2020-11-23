@@ -1,0 +1,14 @@
+targets:
+  $default:
+    builders:
+      fatu:
+        options:
+          filename: export
+
+builders:
+  fatu:
+    import: 'package:fatu/builder.dart'
+    builder_factories: ['fatuBuilder']
+    build_extensions: {"$lib$": [".dart"]}
+    auto_apply: dependents
+    build_to: source
