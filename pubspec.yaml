@@ -1,17 +1,17 @@
-name: abet
-description: Aggregation builder example template.
-version: 1.0.0
+name: builder_examples
+description: Builder examples.
+version: 1.0.0+1
 
 environment:
-  sdk: '>=2.10.4 <3.0.0'
+  sdk: '>=2.12.2 <3.0.0'
 
 dependencies:
-  build: ^1.5.1
-  glob: ^1.2.0
-  path: ^1.7.0
-  source_gen: ^0.9.8
+  build: ^2.0.0
+  glob: ^2.0.1
+  path: ^1.8.0
+  source_gen: ^1.0.0
 
 dev_dependencies:
   build_runner: ^1.10.6
-  pedantic: ^1.9.0
-  test: ^1.14.4
+  pedantic: ^1.11.0
+  test: ^1.16.8

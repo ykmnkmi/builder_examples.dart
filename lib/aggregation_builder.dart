@@ -1,20 +1,22 @@
+library aggregation_builder;
+
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-import 'package:abet/abet.dart';
+import 'package:builder_examples/aggregation.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as path;
 import 'package:source_gen/source_gen.dart';
 
-Builder abetBuilder(BuilderOptions options) {
-  return ABETBuilder(options.config['filename'] ?? 'export');
+Builder aggregationBuilder(BuilderOptions options) {
+  return AggregationBuilder(options.config['filename'] ?? 'export');
 }
 
-class ABETBuilder implements Builder {
-  static final allFilesInLib = Glob('lib/**.dart');
-
-  const ABETBuilder(this.outFileName);
+class AggregationBuilder implements Builder {
+  AggregationBuilder(this.outFileName) : outputPath = path.join('lib', '$outFileName.dart');
 
   final String outFileName;
+
+  final String outputPath;
 
   @override
   Map<String, List<String>> get buildExtensions {
@@ -24,12 +26,12 @@ class ABETBuilder implements Builder {
   }
 
   AssetId allFileOutput(BuildStep buildStep) {
-    return AssetId(buildStep.inputId.package, path.join('lib', '$outFileName.dart'));
+    return AssetId(buildStep.inputId.package, outputPath);
   }
 
   @override
   Future<void> build(BuildStep buildStep) async {
-    final checker = TypeChecker.fromRuntime(Export);
+    final checker = TypeChecker.fromRuntime(Aggregate);
     final functions = <Uri, List<Element>>{};
 
     await for (final input in buildStep.findAssets(Glob('lib/**.dart'))) {
@@ -40,11 +42,15 @@ class ABETBuilder implements Builder {
           .map((annotatedElement) => annotatedElement.element);
 
       for (final element in elements) {
-        if (!functions.containsKey(element.source.uri)) {
-          functions[element.source.uri] = <Element>[];
-        }
+        final source = element.source;
 
-        functions[element.source.uri].add(element);
+        if (source != null) {
+          if (!functions.containsKey(source.uri)) {
+            functions[source.uri] = <Element>[];
+          }
+
+          functions[source.uri]!.add(element);
+        }
       }
     }
 
@@ -52,10 +58,12 @@ class ABETBuilder implements Builder {
 
     for (final uri in functions.keys) {
       buffer.write('export \'$uri\' show ');
-      functions[uri].sort((a, b) => a.name.compareTo(b.name));
-      buffer.writeAll(functions[uri].map((function) => function.name), ', ');
+      functions[uri]!.sort((a, b) => a.name!.compareTo(b.name!));
+      buffer.writeAll(functions[uri]!.map((function) => function.name), ', ');
       buffer.writeln(';');
     }
+
+    print('buffer: $buffer');
 
     await buildStep.writeAsString(allFileOutput(buildStep), buffer.toString());
   }

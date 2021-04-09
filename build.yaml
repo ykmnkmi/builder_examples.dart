@@ -1,7 +1,17 @@
+targets:
+  $default:
+    builders:
+      builder_examples|aggregation_builder:
+        enabled: true
+        options:
+          filename: aggregated
+
 builders:
-  abet:
-    import: 'package:abet/builder.dart'
-    builder_factories: ['abetBuilder']
-    build_extensions: {"$lib$": [".dart"]}
+  builder_examples|aggregation_builder:
+    import: 'package:builder_examples/aggregation_builder.dart'
+    builder_factories: ['aggregationBuilder']
+    build_extensions:
+      $lib$:
+      - .dart
     auto_apply: dependents
     build_to: source
