@@ -63,8 +63,6 @@ class AggregationBuilder implements Builder {
       buffer.writeln(';');
     }
 
-    print('buffer: $buffer');
-
     await buildStep.writeAsString(allFileOutput(buildStep), buffer.toString());
   }
 }
