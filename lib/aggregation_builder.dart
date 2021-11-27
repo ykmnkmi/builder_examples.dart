@@ -12,7 +12,8 @@ Builder aggregationBuilder(BuilderOptions options) {
 }
 
 class AggregationBuilder implements Builder {
-  AggregationBuilder(this.outFileName) : outputPath = path.join('lib', '$outFileName.dart');
+  AggregationBuilder(this.outFileName)
+      : outputPath = path.join('lib', '$outFileName.dart');
 
   final String outFileName;
 
@@ -31,18 +32,18 @@ class AggregationBuilder implements Builder {
 
   @override
   Future<void> build(BuildStep buildStep) async {
-    final checker = TypeChecker.fromRuntime(Aggregate);
-    final functions = <Uri, List<Element>>{};
+    var checker = TypeChecker.fromRuntime(Aggregate);
+    var functions = <Uri, List<Element>>{};
 
-    await for (final input in buildStep.findAssets(Glob('lib/**.dart'))) {
-      final library = await buildStep.resolver.libraryFor(input);
-      final annotatedElements = LibraryReader(library).annotatedWith(checker);
-      final elements = annotatedElements
+    await for (var input in buildStep.findAssets(Glob('lib/**.dart'))) {
+      var library = await buildStep.resolver.libraryFor(input);
+      var annotatedElements = LibraryReader(library).annotatedWith(checker);
+      var elements = annotatedElements
           .where((annotatedElement) => annotatedElement.element.isPublic)
           .map((annotatedElement) => annotatedElement.element);
 
-      for (final element in elements) {
-        final source = element.source;
+      for (var element in elements) {
+        var source = element.source;
 
         if (source != null) {
           if (!functions.containsKey(source.uri)) {
@@ -54,9 +55,9 @@ class AggregationBuilder implements Builder {
       }
     }
 
-    final buffer = StringBuffer();
+    var buffer = StringBuffer();
 
-    for (final uri in functions.keys) {
+    for (var uri in functions.keys) {
       buffer.write('export \'$uri\' show ');
       functions[uri]!.sort((a, b) => a.name!.compareTo(b.name!));
       buffer.writeAll(functions[uri]!.map((function) => function.name), ', ');
